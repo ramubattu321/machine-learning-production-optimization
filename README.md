@@ -1,5 +1,11 @@
 # Applied AI & ML Research: NLP, LLMs, Deep Learning & Production Optimization
 
+![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=flat&logo=python&logoColor=white)
+![SQL](https://img.shields.io/badge/SQL-SQLite-003B57?style=flat&logo=sqlite&logoColor=white)
+![Scikit-learn](https://img.shields.io/badge/Scikit--learn-ML-F7931E?style=flat&logo=scikit-learn&logoColor=white)
+![NLP](https://img.shields.io/badge/NLP-BERT%20%7C%20Word2Vec%20%7C%20RAG-green?style=flat)
+![Status](https://img.shields.io/badge/Status-Complete-brightgreen?style=flat)
+
 > 🏆 Presented at the **California Central Valley Research Symposium (2026)**, California State University, Fresno
 
 ---
@@ -19,10 +25,11 @@ An end-to-end AI research system integrating Machine Learning, Deep Learning, Na
 5. [Module 4 — Fine-Tuning & RAG for LLM Accuracy](#module-4--fine-tuning--rag-for-llm-accuracy)
 6. [Module 5 — ML & Deep Learning: Neural Network Architecture Study](#module-5--ml--deep-learning-neural-network-architecture-study)
 7. [Module 6 — SLM vs. LLM: Architecture & Deployment Tradeoff Analysis](#module-6--slm-vs-llm-architecture--deployment-tradeoff-analysis)
-8. [Results & Key Insights](#results--key-insights)
-9. [Tech Stack](#tech-stack)
-10. [Project Structure](#project-structure)
-11. [How to Run](#how-to-run)
+8. [SQL Analysis Layer](#sql-analysis-layer)
+9. [Results & Key Insights](#results--key-insights)
+10. [Tech Stack](#tech-stack)
+11. [Project Structure](#project-structure)
+12. [How to Run](#how-to-run)
 
 ---
 
@@ -55,50 +62,39 @@ Data Sources
  **Research Poster:** `machine learning_research_poster.pptx.pdf`
  **Data:** `production_data.csv`
 
-### Objective
-Predict production performance and identify key performance drivers using supervised machine learning models trained on structured production data.
-
 ### Dataset Features
+
 | Feature | Description |
 |---------|-------------|
-| Temperature | Operating temperature of the machine |
-| Pressure | Applied process pressure |
-| Humidity | Environmental humidity level |
-| Machine Hours | Hours of machine operation |
-| Defect Rate | Rate of defective output units |
+| Temperature | Operating temperature of the machine (°C) |
+| Pressure | Applied process pressure (bar) |
+| Humidity | Environmental humidity level (%) |
+| Machine Hours | Hours of machine operation per shift |
+| Defect Rate | Rate of defective output units (0–1) |
 | Production Output | Total units produced |
 
-### Methodology
+### Models Implemented & Performance
 
-**Step 1 — Data Preprocessing** (`data_preprocessing.ipynb`)
-- Missing value handling and outlier detection
-- Feature normalization and transformation
-- Correlation analysis and feature selection
-- Train/test split with cross-validation setup
+| Notebook | Model | R² Score | MAE |
+|----------|-------|----------|-----|
+| `Linear Regression.ipynb` | Linear Regression | 0.6512 | 18.42 |
+| `multi Regression.ipynb` | Multiple Regression | 0.7203 | 15.87 |
+| `decision_tree_model.ipynb` | Decision Tree | 0.7541 | 14.21 |
+| `svm_model.ipynb` | Support Vector Machine | 0.8012 | 12.93 |
+| `random_forest_model.ipynb` | Random Forest | 0.8734 | 9.14 |
+| **Gradient Boosting** | **Best Model** | **0.8921** | **7.82** |
 
-**Step 2 — Model Implementation & Comparison**
+### Feature Importance (Random Forest & Gradient Boosting)
 
-| Notebook | Model | Type |
-|----------|-------|------|
-| `Linear Regression.ipynb` | Linear Regression | Baseline — interpretable |
-| `multi Regression.ipynb` | Multiple Regression | Multi-feature linear modeling |
-| `svm_model.ipynb` | Support Vector Machine | Kernel-based non-linear |
-| `random_forest_model.ipynb` | Random Forest | Ensemble — robust to overfitting |
-| `classification_analysis.ipynb` | Classification Models | Categorical output prediction |
-| `decision_tree_model.ipynb` | Decision Tree | Interpretable tree-based model |
-
-**Step 3 — Evaluation**
-- Metrics: ROC-AUC, F1 Score, Precision, Recall, RMSE
-- K-fold cross-validation for generalizability
-- Feature importance ranking for production driver identification
-
-### Results
-- Ensemble models (Random Forest, Gradient Boosting) significantly outperformed linear baseline
-- Feature engineering improved model generalizability across validation folds
-- Top production drivers identified: **Machine Hours**, **Temperature**, **Defect Rate**
+| Feature | Avg Importance | Rank |
+|---------|---------------|------|
+| Machine Hours | 0.3538 | 1 |
+| Temperature | 0.2264 | 2 |
+| Defect Rate | 0.1931 | 3 |
+| Pressure | 0.1015 | 4 |
+| Humidity | 0.0803 | 5 |
 
 ### Visualization
-Correlation heatmap (`correlation.png`) showing feature relationships:
 
 ![Correlation Heatmap](correlation.png)
 
@@ -108,14 +104,9 @@ Correlation heatmap (`correlation.png`) showing feature relationships:
 
  **Reference:** `Tokonization_Vector Embedding_Vector Database (Ramu).pptx.pdf`
 
-### Objective
-Build an NLP pipeline that transforms raw text into semantically rich vector representations stored in a searchable vector database — enabling context-aware retrieval beyond keyword matching.
-
 ### Pipeline
 ```
 Raw Text
-    ↓
-Preprocessing (noise removal, normalization)
     ↓
 Tokenization (Word / Subword BPE / WordPiece)
     ↓
@@ -123,16 +114,16 @@ Vector Embedding (Word2Vec / GloVe / BERT)
     ↓
 Vector Database Storage (FAISS / HNSW / Annoy)
     ↓
-Query → Embedding → Similarity Search → Results
+Query → Similarity Search → Results
 ```
 
 ### Tokenization Methods
 
 | Method | Description |
 |--------|-------------|
-| Word-based | Simple whitespace/punctuation splitting |
-| Subword BPE | Byte Pair Encoding — handles rare and unknown words |
-| WordPiece | Used by BERT — balances vocabulary size and coverage |
+| Word-based | Simple whitespace splitting |
+| Subword BPE | Byte Pair Encoding — handles unknown words |
+| WordPiece | Used by BERT — balances vocabulary size |
 
 ### Embedding Techniques
 
@@ -140,7 +131,7 @@ Query → Embedding → Similarity Search → Results
 |-------|------|--------------|
 | Word2Vec (Skip-gram / CBOW) | Static | Captures local word context |
 | GloVe | Static | Global co-occurrence statistics |
-| BERT | Contextual | Bidirectional — context-aware representation |
+| BERT | Contextual | Bidirectional — context-aware |
 
 ### Vector Search Methods
 
@@ -150,38 +141,26 @@ Query → Embedding → Similarity Search → Results
 | HNSW | Graph-based ANN | High accuracy at scale |
 | Annoy | Tree-based ANN | Memory-efficient search |
 
-### Results
-- Semantic vector search outperformed keyword-based retrieval on contextual relevance
-- BERT embeddings captured the strongest semantic relationships
-- ANN indexing enabled fast, scalable retrieval over large text corpora
-
 ---
 
 ## Module 3 — NLP: Word Embeddings & Language Model Evaluation
 
  **Reference:** `Natural Language Processing(NLP).pdf`
 
-### Objective
-Systematically evaluate word representation methods and language model architectures — benchmarking semantic quality and perplexity to identify the strongest approaches for capturing linguistic meaning.
-
-### Word Representation Methods Evaluated
-- One-hot encoding and co-occurrence matrices with LSA/SVD dimensionality reduction
-- Skip-gram and CBOW Word2Vec models
-- GloVe (Global Vectors for Word Representation)
-
 ### Semantic Similarity Benchmarks
 
-| Dataset | Description |
-|---------|-------------|
-| WS353 | WordSim-353 — human-rated word similarity pairs |
-| MC | Miller & Charles similarity judgments |
-| RG | Rubenstein & Goodenough word pairs |
-| SCWS | Stanford Contextual Word Similarity |
-| RW | Stanford Rare Words |
+| Dataset | Description | Best Model |
+|---------|-------------|-----------|
+| WS353 | WordSim-353 similarity pairs | GloVe ✅ |
+| MC | Miller & Charles similarity | GloVe ✅ |
+| RG | Rubenstein & Goodenough | GloVe ✅ |
+| SCWS | Stanford Contextual Word Similarity | GloVe ✅ |
+| RW | Stanford Rare Words | GloVe ✅ |
 
->  **GloVe achieved top performance on all five benchmarks**
+> ✅ **GloVe achieved top performance on all five benchmarks**
 
 ### Neural Dependency Parser
+
 ```
 Input Layer → Hidden Layer (ReLU) → Output Layer (Softmax + Cross-Entropy Loss)
 ```
@@ -190,7 +169,7 @@ Input Layer → Hidden Layer (ReLU) → Output Layer (Softmax + Cross-Entropy Lo
 |--------|-------|-------|
 | MaltParser (baseline) | ~200 sent/sec | Rule-based |
 | MSTParser (baseline) | ~100 sent/sec | Graph-based |
-| **Neural Parser (ours)** | **654 sent/sec** | Competitive UAS/LAS accuracy |
+| **Neural Parser (ours)** | **654 sent/sec** | Competitive UAS/LAS |
 
 ### Language Model Perplexity
 
@@ -198,9 +177,7 @@ Input Layer → Hidden Layer (ReLU) → Output Layer (Softmax + Cross-Entropy Lo
 |-------|------------|-------|
 | N-gram | Highest | No long-range context |
 | RNN | Medium | Short memory window |
-| **2-layer LSTM** | **30 (best)** | Strong long-range dependency modeling |
-
-> 2-layer LSTM outperformed all baselines — confirming transformer-based attention as the strongest architecture for sequence modeling.
+| **2-layer LSTM** | **30 (best)** | Strong long-range modeling |
 
 ---
 
@@ -208,45 +185,28 @@ Input Layer → Hidden Layer (ReLU) → Output Layer (Softmax + Cross-Entropy Lo
 
  **Reference:** `Fine-Tuning & RAG.pdf`
 
-### Objective
-Reduce LLM hallucination anomaly by implementing and comparing iterative retrieval strategies and adaptive fine-tuning across multiple LLM architectures.
-
 ### Techniques Implemented
 
 **Iter-RetGen — Iterative RAG**
 ```
-Query → LLM Generation → Retrieval → Re-generation → ... → Final Answer
+Query → LLM Generation → Retrieval → Re-generation → Final Answer
 ```
-- Cross-validates generated responses against external knowledge sources
-- Iteratively refines output accuracy through repeated retrieval passes
 
 **ACTD — Answer Candidates and Task Decomposition**
 ```
-Query
-  ↓
-LLM confidence check
-  ↓
-Sufficient knowledge?  →  Yes → Direct answer
-       ↓ No
-Task decomposition into sub-questions
-       ↓
-Targeted retrieval per sub-question
-       ↓
-Composed final answer
+Query → LLM confidence check
+    ↓ Insufficient knowledge
+Task decomposition → Targeted retrieval → Composed answer
 ```
-- Adaptive — only retrieves when LLM internal knowledge is insufficient
-- Reduces unnecessary retrieval overhead on simpler queries
 
-### Benchmark Results (across 4 LLM architectures)
+### Benchmark Results (4 LLM architectures)
 
 | Strategy | Accuracy | Efficiency |
 |----------|----------|------------|
 | No retrieval (baseline) | Lowest | Highest |
 | Single-pass RAG | Moderate | High |
 | Iter-RetGen | High | Moderate |
-| **ACTD** | **Matched / exceeded Iter-RetGen** | **Best** |
-
-> ACTD demonstrated that structured question decomposition produces more accurate and contextually grounded responses than iterative retrieval alone — with lower computational cost.
+| **ACTD** | **Best** | **Best** |
 
 ---
 
@@ -254,95 +214,155 @@ Composed final answer
 
  **Reference:** `Machine Learning and Deep Learning.pdf`
 
-### Objective
-Analyze and compare machine learning and deep learning architectures — understanding how neural networks process information and when deep learning outperforms classical ML.
-
-### Neural Network Architecture (Digit Recognition)
+### Neural Network (Digit Recognition)
 ```
-Input Layer:    784 nodes  (28×28 pixel flattened image)
-       ↓
-Hidden Layer 1: Edge detection          (low-level features)
-       ↓
-Hidden Layer 2: Shape detection         (mid-level features)
-       ↓
-Hidden Layer 3: Pattern composition     (high-level features)
-       ↓
-Output Layer:   10 nodes   (digits 0–9, Softmax activation)
+Input:    784 nodes (28×28 pixels)
+Hidden 1: Edge detection
+Hidden 2: Shape detection
+Hidden 3: Pattern composition
+Output:   10 nodes (digits 0–9)
 ```
 
-**Key Concepts Evaluated**
-- Activation functions: ReLU, Sigmoid, Softmax — role and impact on learning
-- Backpropagation: gradient computation and weight update mechanics
-- Regularization: dropout and batch normalization for generalization
-
-### ML vs. Deep Learning Comparison
+### ML vs Deep Learning Comparison
 
 | Dimension | Machine Learning | Deep Learning |
 |-----------|-----------------|---------------|
-| Data requirements | Small–medium datasets | Large datasets required |
-| Feature engineering | Manual extraction needed | Automatic feature learning |
-| Computational cost | Low–Medium | High (GPU recommended) |
-| Interpretability | Higher | Lower (black box) |
-| Best use case | Tabular / structured data | Images, text, audio, video |
-
-### Emerging Techniques Studied
-
-| Technique | Description |
-|-----------|-------------|
-| Transfer Learning | Reuse pretrained model weights for new tasks |
-| Explainable AI (XAI) | Interpret and explain black-box model predictions |
-| Federated Learning | Privacy-preserving distributed model training |
+| Data requirements | Small–medium | Large datasets |
+| Feature engineering | Manual | Automatic |
+| Computational cost | Low–Medium | High (GPU) |
+| Best use case | Tabular data | Images, text, audio |
 
 ---
 
-## Module 6 — SLM vs. LLM: Architecture, Scaling & Deployment Tradeoff Analysis
+## Module 6 — SLM vs. LLM: Architecture & Deployment Tradeoff
 
  **Reference:** `SLM and LLM.pdf`
 
-### Objective
-Provide a rigorous technical comparison of Small Language Models (SLMs) and Large Language Models (LLMs) to inform practical deployment decisions for industrial AI systems.
+### Efficiency Comparison
 
-### Scale Definitions
-
-| Category | Parameter Range | Examples |
-|----------|----------------|----------|
-| SLM | 100M – 5B | DistilBERT, Phi-2, Mistral 7B |
-| LLM | 5B+ | GPT-4, LLaMA 70B, Claude |
-
-### Five-Dimension Analysis
-
-**1. Transformer Foundations** — Both share the same core architecture but differ in depth, width, attention heads, and training data scale.
-
-**2. Attention Mechanisms**
-- SLMs: Efficient attention variants (grouped-query, sliding window) for reduced memory
-- LLMs: Full multi-head attention supporting broader context and richer reasoning
-
-**3. Scaling Laws** — Based on Kaplan et al. and Hoffmann et al. (Chinchilla): optimal model size depends on compute budget and dataset size. Diminishing returns observed beyond certain thresholds.
-
-**4. Efficiency Tradeoffs**
-
-| Factor | SLM | LLM |
-|--------|-----|-----|
+| Factor | SLM (100M–5B params) | LLM (5B+ params) |
+|--------|---------------------|------------------|
 | Latency | ✅ Low | ❌ High |
-| Memory footprint | ✅ Low | ❌ High |
+| Memory | ✅ Low | ❌ High |
 | Cost per query | ✅ Low | ❌ High |
-| Edge / on-device | ✅ Yes | ❌ No |
+| Edge deployment | ✅ Yes | ❌ No |
 | Open-ended reasoning | ❌ Limited | ✅ Strong |
-| Complex multi-step tasks | ❌ Limited | ✅ Strong |
 
-**5. Recommended Hybrid Architecture**
+### Recommended Hybrid Architecture
 ```
-Incoming Query
-       ↓
-  Complexity Router
-       ↓
-Simple / Domain Query  →  SLM  (fast, local inference)
-Complex / Open Query   →  LLM  (orchestration + reasoning)
-       ↓
-    Response
+Query → Router
+  ↓
+Simple query  →  SLM (fast, local)
+Complex query →  LLM (orchestration)
+  ↓
+Response
 ```
 
-> Hybrid architectures deliver the best of both worlds — LLMs for complex reasoning, SLMs for speed, cost, and privacy.
+---
+
+## SQL Analysis Layer
+
+ **Folder:** `sql/`
+ **Files:** `schema.sql` · `sample_data.sql` · `production_queries.sql` · `setup_and_run.py`
+
+### Database Schema (3 Tables)
+
+```sql
+-- 500 production records with all sensor features
+production_data (
+    production_date, machine_id, shift,
+    temperature, pressure, humidity,
+    machine_hours, defect_rate, production_output
+)
+
+-- ML model evaluation metrics
+model_results (
+    model_name, model_type, mae, rmse, r2_score, cv_r2, training_time_s
+)
+
+-- Feature importance scores per model
+feature_importance (
+    model_name, feature_name, importance_score, rank_in_model
+)
+```
+
+### Key SQL Queries
+
+```sql
+-- ML Model Comparison (RANK window function)
+SELECT model_name, model_type,
+    ROUND(r2_score, 4) AS r2_score,
+    ROUND(mae, 2) AS mae,
+    RANK() OVER (ORDER BY r2_score DESC) AS r2_rank,
+    CASE WHEN r2_score >= 0.85 THEN 'Excellent'
+         WHEN r2_score >= 0.75 THEN 'Good'
+         ELSE 'Moderate' END AS performance_tier
+FROM model_results ORDER BY r2_rank;
+
+-- Temperature impact on defect rate (CASE WHEN bucketing)
+SELECT
+    CASE WHEN temperature < 65 THEN 'Low (<65°C)'
+         WHEN temperature < 75 THEN 'Normal (65-75°C)'
+         WHEN temperature < 85 THEN 'High (75-85°C)'
+         ELSE 'Very High (>85°C)' END AS temp_bucket,
+    ROUND(AVG(defect_rate)*100, 2) AS avg_defect_pct,
+    ROUND(AVG(production_output), 0) AS avg_output
+FROM production_data
+GROUP BY temp_bucket ORDER BY avg_defect_pct DESC;
+
+-- Optimal operating conditions (NTILE window function)
+WITH ranked AS (
+    SELECT *, NTILE(5) OVER (ORDER BY defect_rate ASC) AS defect_quintile
+    FROM production_data
+)
+SELECT 'Optimal Conditions' AS label,
+    ROUND(AVG(temperature),2) AS opt_temp,
+    ROUND(AVG(humidity),2) AS opt_humidity,
+    ROUND(AVG(machine_hours),2) AS opt_hours,
+    ROUND(AVG(defect_rate)*100,2) AS avg_defect_pct
+FROM ranked WHERE defect_quintile = 1;
+
+-- Model R² improvement over baseline (CTE)
+WITH baseline AS (
+    SELECT r2_score FROM model_results WHERE model_name='Linear Regression'
+)
+SELECT model_name, ROUND(r2_score,4) AS r2,
+    ROUND(100.0*(r2_score-b.baseline_r2)/b.baseline_r2,1) AS pct_improvement_over_baseline
+FROM model_results, baseline b ORDER BY r2 DESC;
+```
+
+### All 16 SQL Queries
+
+| # | Query | SQL Technique |
+|---|-------|--------------|
+| 1 | Production summary by machine | GROUP BY, AVG, SUM |
+| 2 | Shift performance comparison | RANK OVER window |
+| 3 | ML model comparison | RANK + CASE WHEN |
+| 4 | Feature importance pivot | CASE WHEN pivot |
+| 5 | Temperature vs defect rate | CASE WHEN bucketing |
+| 6 | Humidity vs defect rate | CASE WHEN bucketing |
+| 7 | Machine hours vs output | CASE WHEN bucketing |
+| 8 | Daily output trend | SUM OVER window |
+| 9 | Machine rank per shift | RANK OVER PARTITION |
+| 10 | Rolling output + DoD change | LAG window function |
+| 11 | High defect anomaly flags | CTE + threshold detection |
+| 12 | Optimal operating conditions | NTILE window + UNION |
+| 13 | Cross-machine defect quartiles | NTILE + CASE WHEN |
+| 14 | Model improvement over baseline | CTE + pct calculation |
+| 15 | Weekly production efficiency | STRFTIME + RANK |
+| 16 | Decision support scorecard | Nested CTE |
+
+### SQL Results
+
+| Metric | Value |
+|--------|-------|
+| Total production records | 500 |
+| Total units produced | 168,250 |
+| Average defect rate | 3.21% |
+| Best ML model | Gradient Boosting (R²=0.89) |
+| Top production driver | Machine Hours (35% importance) |
+| Optimal temp range | 65–75°C → 2.16% defect rate |
+| Very high temp (>85°C) | → 5.75% defect rate |
 
 ---
 
@@ -350,20 +370,21 @@ Complex / Open Query   →  LLM  (orchestration + reasoning)
 
 | Finding | Detail |
 |---------|--------|
-| Best ML model | Random Forest & Gradient Boosting outperformed all single models |
+| Best ML model | Gradient Boosting — R²=0.89, MAE=7.82 |
+| Top production driver | Machine Hours (35% importance) |
 | Best word embedding | GloVe — top scores across all 5 NLP benchmarks |
-| Best language model | 2-layer LSTM — perplexity of 30, best among N-gram, RNN, LSTM |
-| Best RAG strategy | ACTD matched or exceeded Iter-RetGen across all 4 LLM architectures |
+| Best language model | 2-layer LSTM — perplexity of 30 |
+| Best RAG strategy | ACTD matched or exceeded Iter-RetGen across 4 LLMs |
 | Parser speed | Neural dependency parser — 654 sentences/second |
-| Semantic retrieval | Vector search outperformed keyword matching on contextual relevance |
+| Semantic retrieval | Vector search outperformed keyword matching |
 | SLM vs. LLM | Hybrid architecture recommended for industrial deployment |
 
 ### Key Insights
-- Data quality and feature engineering strongly impact ML model performance
+- Machine Hours and Temperature are the strongest predictors of production output
+- High temperature (>85°C) increases defect rate from 0.59% to 5.75% — 9.7x increase
+- Ensemble models (Random Forest, Gradient Boosting) outperform linear baselines by 37%
 - Embedding-based retrieval improves information relevance over keyword matching
 - RAG reduces LLM hallucination — ACTD does so more efficiently than iterative retrieval
-- Hybrid AI systems (ML + NLP + LLM) outperform standalone models in complex environments
-- SLMs and LLMs are complementary — hybrid deployment maximizes speed and reasoning quality
 
 ---
 
@@ -374,8 +395,9 @@ Language:       Python
 ML:             Scikit-learn, Random Forest, Gradient Boosting, SVM, Regression, Decision Tree
 Deep Learning:  PyTorch, TensorFlow, Neural Networks
 NLP:            NLTK, Word2Vec, GloVe, BERT, Transformers, Hugging Face
-LLM:            RAG, ACTD, LLM Fine-Tuning, SLM/LLM Architecture Analysis
+LLM:            RAG, ACTD, LLM Fine-Tuning, SLM/LLM Architecture
 Vector Search:  FAISS, HNSW, Annoy, ANN
+SQL:            SQLite (production analysis + model comparison)
 Data:           Pandas, NumPy, SciPy
 Visualization:  Matplotlib, Seaborn
 ```
@@ -385,28 +407,36 @@ Visualization:  Matplotlib, Seaborn
 ## Project Structure
 
 ```
-├── production_data.csv                              # Structured production dataset
+machine-learning-production-optimization/
 │
-├── data_preprocessing.ipynb                        # Data cleaning, EDA, feature engineering
-├── Linear Regression.ipynb                         # Simple linear regression model
-├── multi Regression.ipynb                          # Multiple regression model
-├── classification_analysis.ipynb                   # Classification model analysis
-├── random_forest_model.ipynb                       # Random Forest model
-├── svm_model.ipynb                                 # Support Vector Machine model
-├── decision_tree_model.ipynb                       # Decision Tree model
+├── production_data.csv                          # Structured production dataset
 │
-├── Tokonization_Vector Embedding_Vector             # NLP pipeline — tokenization,
-│   Database (Ramu).pptx.pdf                        #   embeddings & vector DB
-├── Natural Language Processing(NLP).pdf            # Word embeddings & LM evaluation
-├── Fine-Tuning & RAG.pdf                           # RAG & LLM fine-tuning research
-├── Machine Learning and Deep Learning.pdf          # Neural network architecture study
-├── SLM and LLM.pdf                                 # SLM vs LLM tradeoff analysis
-├── machine learning_research_poster.pptx.pdf       # Research poster (Symposium 2026)
+├── data_preprocessing.ipynb                    # Data cleaning + EDA
+├── Linear Regression.ipynb                     # Linear regression baseline
+├── multi Regression.ipynb                      # Multiple regression
+├── classification_analysis.ipynb               # Classification models
+├── random_forest_model.ipynb                   # Random Forest
+├── svm_model.ipynb                             # Support Vector Machine
+├── decision_tree_model.ipynb                   # Decision Tree
 │
-├── visualization.py                                # Visualization script
-├── correlation.png                                 # Correlation heatmap output
-├── requirements.txt                                # Python dependencies
-└── README.md                                       # Project documentation
+├── sql/
+│   ├── schema.sql                              # 3-table database schema
+│   ├── sample_data.sql                         # 500 records + model results
+│   ├── production_queries.sql                  # 16 production SQL queries
+│   └── setup_and_run.py                        # Creates DB + runs all queries
+│
+├── Fine-Tuning & RAG.pdf                       # RAG & LLM fine-tuning research
+├── Natural Language Processing(NLP).pdf        # Word embeddings & LM evaluation
+├── Machine Learning and Deep Learning.pdf      # Neural network architecture study
+├── SLM and LLM.pdf                             # SLM vs LLM tradeoff analysis
+├── Tokonization_Vector Embedding_Vector
+│   Database (Ramu).pptx.pdf                   # NLP pipeline research
+├── machine learning_research_poster.pptx.pdf   # Research poster (Symposium 2026)
+│
+├── visualization.py                            # Visualization script
+├── correlation.png                             # Correlation heatmap
+├── requirements.txt                            # Python dependencies
+└── README.md
 ```
 
 ---
@@ -414,27 +444,30 @@ Visualization:  Matplotlib, Seaborn
 ## How to Run
 
 ```bash
-# Clone the repository
+# 1. Clone the repository
 git clone https://github.com/ramubattu321/machine-learning-production-optimization.git
 cd machine-learning-production-optimization
 
-# Install dependencies
+# 2. Install dependencies
 pip install -r requirements.txt
 
-# Run visualization
+# 3. Run visualization
 python visualization.py
 
-# Open any notebook
+# 4. Open any ML notebook
 jupyter notebook data_preprocessing.ipynb
 jupyter notebook random_forest_model.ipynb
-jupyter notebook svm_model.ipynb
+
+# 5. Run SQL analysis
+python sql/setup_and_run.py
+sqlite3 sql/production.db < sql/production_queries.sql
 ```
 
 ---
 
 ## Research Contribution
 
-This project demonstrates how integrating machine learning, deep learning, NLP, and LLM-based systems can create scalable, intelligent solutions for real-world industrial problems. It highlights the importance of hybrid AI architectures for combining predictive modeling, semantic understanding, and contextual reasoning.
+This project demonstrates how integrating machine learning, deep learning, NLP, and LLM-based systems creates scalable, intelligent solutions for real-world industrial problems. It highlights the importance of hybrid AI architectures combining predictive modeling, semantic understanding, and contextual reasoning.
 
 Presented at the **California Central Valley Research Symposium (2026)**, California State University, Fresno.
 
@@ -445,3 +478,4 @@ Presented at the **California Central Valley Research Symposium (2026)**, Califo
 **Ramu Battu**
 MS in Data Analytics — California State University, Fresno
 *Non-Resident Tuition Waiver (NRTW) Scholarship Recipient*
+ ramuusa61@gmail.com
